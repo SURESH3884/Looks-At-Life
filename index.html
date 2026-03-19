@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Looks At Life — Wear Your Future</title>
+
+  <!-- SEO -->
+  <meta name="description" content="AI-powered fashion platform with virtual try-on, smart size matching, and personalized style curation. Wear your future with Looks At Life." />
+  <meta name="keywords" content="AI fashion, virtual try-on, smart clothing, personalized style, online fashion" />
+  <meta name="author" content="Looks At Life" />
+  <meta property="og:title" content="Looks At Life — Wear Your Future" />
+  <meta property="og:description" content="Next-gen AI fashion platform with virtual try-on and body-matched recommendations." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0a0a0f" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===== DESIGN TOKENS ===== */
+    :root {
+      --bg:        #0a0a0f;
+      --bg2:       #11111a;
+      --bg3:       #18182a;
+      --surface:   #1e1e30;
+      --border:    rgba(255,255,255,0.07);
+      --accent:    #c8a96e;
+      --accent2:   #e8c98e;
+      --accent3:   #7c6fff;
+      --text:      #f0ece4;
+      --text2:     #a09a92;
+      --danger:    #ff5757;
+      --success:   #43e97b;
+      --gold:      linear-gradient(135deg,#c8a96e,#e8c98e,#c8a96e);
+      --glass:     rgba(255,255,255,0.04);
+      --glow:      0 0 40px rgba(200,169,110,0.15);
+      --radius:    16px;
+      --radius-sm: 10px;
+      --font-display: 'Playfair Display', serif;
+      --font-body:    'DM Sans', sans-serif;
+      --font-mono:    'Space Mono', monospace;
+    }
+
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.65;
+      overflow-x: hidden;
+      min-height: 100dvh;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+    /* ===== NOISE OVERLAY ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ===== PAGES ===== */
+    .page { display: none; min-height: 100dvh; }
+    .page.active { display: flex; flex-direction: column; }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position:  200% center; }
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.5; }
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0px); }
+      50%      { transform: translateY(-8px); }
+    }
+    @keyframes glow-pulse {
+      0%,100% { box-shadow: 0 0 20px rgba(200,169,110,0.2); }
+      50%      { box-shadow: 0 0 40px rgba(200,169,110,0.5); }
+    }
+    .fade-up { animation: fadeUp 0.6s ease both; }
+    .fade-up-2 { animation: fadeUp 0.6s 0.15s ease both; }
+    .fade-up-3 { animation: fadeUp 0.6s 0.3s ease both; }
+    .fade-up-4 { animation: fadeUp 0.6s 0.45s ease both; }
+    .float { animation: float 4s ease-in-out infinite; }
+
+    /* ===== UTILITY ===== */
+    .gold-text {
+      background: var(--gold);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+    }
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .badge-gold { background: rgba(200,169,110,0.15); color: var(--accent2); border: 1px solid rgba(200,169,110,0.3); }
+    .badge-purple { background: rgba(124,111,255,0.15); color: #a89fff; border: 1px solid rgba(124,111,255,0.3); }
+    .badge-green { background: rgba(67,233,123,0.12); color: var(--success); border: 1px solid rgba(67,233,123,0.25); }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+      outline: none;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #c8a96e, #e8c98e);
+      color: #0a0a0f;
+      box-shadow: 0 4px 20px rgba(200,169,110,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(200,169,110,0.5); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: var(--glass); border-color: rgba(255,255,255,0.15); }
+    .btn-danger { background: rgba(255,87,87,0.15); color: var(--danger); border: 1px solid rgba(255,87,87,0.3); }
+    .btn-sm { padding: 9px 18px; font-size: 13px; }
+    .btn-full { width: 100%; }
+    .btn-icon { padding: 12px; border-radius: 50%; }
+
+    /* ===== INPUTS ===== */
+    .input-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .input-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text2); }
+    .input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 15px;
+      padding: 13px 16px;
+      transition: all 0.2s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    .input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(200,169,110,0.12); }
+    .input::placeholder { color: rgba(160,154,146,0.5); }
+    select.input { cursor: pointer; }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: all 0.25s ease;
+    }
+    .card:hover { border-color: rgba(200,169,110,0.2); }
+    .card-glass {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 19px;
+      letter-spacing: -0.02em;
+      cursor: pointer;
+    }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .nav-icon-btn {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+      color: var(--text);
+    }
+    .nav-icon-btn:hover { background: var(--bg3); border-color: rgba(255,255,255,0.15); }
+    .nav-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      width: 17px;
+      height: 17px;
+      background: var(--accent);
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 700;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      background: rgba(17,17,26,0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+    }
+    .nav-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 4px 0;
+      transition: all 0.2s;
+      color: var(--text2);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .nav-tab .tab-icon { font-size: 20px; transition: all 0.2s; }
+    .nav-tab.active { color: var(--accent); }
+    .nav-tab.active .tab-icon { transform: scale(1.15); }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 60px 20px 80px;
+      text-align: center;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,169,110,0.12) 0%, transparent 70%),
+                  radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124,111,255,0.08) 0%, transparent 60%);
+    }
+    .hero-tag { margin-bottom: 20px; }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 10vw, 64px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 18px;
+    }
+    .hero-sub { font-size: 16px; color: var(--text2); max-width: 320px; margin: 0 auto 32px; line-height: 1.7; }
+    .hero-cta { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    .hero-stats { display: flex; justify-content: center; gap: 32px; margin-top: 48px; }
+    .hero-stat-num {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .hero-stat-label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ===== SECTIONS ===== */
+    .section { padding: 32px 20px; }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .section-sub { font-size: 13px; color: var(--text2); margin-bottom: 24px; }
+
+    /* ===== PRODUCT GRID ===== */
+    .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .product-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .product-card:hover { transform: translateY(-4px); border-color: rgba(200,169,110,0.25); box-shadow: var(--glow); }
+    .product-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-img-bg {
+      width: 100%;
+      aspect-ratio: 3/4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      position: relative;
+    }
+    .product-wishlist {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      background: rgba(10,10,15,0.7);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .product-wishlist:hover { background: rgba(200,169,110,0.2); border-color: var(--accent); }
+    .product-wishlist.active { color: #ff5757; }
+    .product-fit-badge {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+    }
+    .product-info { padding: 12px 14px 14px; }
+    .product-brand { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+    .product-name { font-size: 13px; font-weight: 600; margin-bottom: 8px; line-height: 1.35; }
+    .product-price-row { display: flex; align-items: center; justify-content: space-between; }
+    .product-price { font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--accent2); }
+    .product-rating { font-size: 11px; color: var(--text2); }
+    .product-colors { display: flex; gap: 5px; margin-top: 8px; }
+    .color-dot { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.2); }
+
+    /* ===== CATEGORIES ===== */
+    .cat-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .cat-scroll::-webkit-scrollbar { display: none; }
+    .cat-chip {
+      flex-shrink: 0;
+      padding: 8px 18px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text2);
+      white-space: nowrap;
+    }
+    .cat-chip.active { background: var(--accent); color: #0a0a0f; border-color: var(--accent); }
+    .cat-chip:hover:not(.active) { border-color: rgba(255,255,255,0.2); color: var(--text); }
+
+    /* ===== FEATURE CARDS ===== */
+    .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(200,169,110,0.3); transform: translateY(-2px); }
+    .feature-icon { font-size: 32px; margin-bottom: 10px; }
+    .feature-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .feature-desc { font-size: 11px; color: var(--text2); line-height: 1.5; }
+
+    /* ===== AUTH PAGE ===== */
+    .auth-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 100% 50% at 50% 0%, rgba(200,169,110,0.1) 0%, transparent 60%),
+                  radial-gradient(ellipse 70% 40% at 20% 80%, rgba(124,111,255,0.08) 0%, transparent 60%);
+    }
+    .auth-brand { padding: 48px 24px 0; position: relative; z-index: 1; }
+    .auth-brand-name {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .auth-brand-tagline { font-size: 14px; color: var(--text2); }
+    .auth-form-wrap { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 0; position: relative; z-index: 1; }
+    .auth-sheet {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-radius: 28px 28px 0 0;
+      padding: 32px 24px max(32px, env(safe-area-inset-bottom));
+    }
+    .auth-tabs { display: flex; gap: 0; background: var(--surface); border-radius: 10px; padding: 4px; margin-bottom: 28px; }
+    .auth-tab {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text2);
+    }
+    .auth-tab.active { background: var(--accent); color: #0a0a0f; }
+
+    /* ===== ONBOARDING ===== */
+    .onboard-wrap {
+      flex: 1;
+      padding: 24px 20px max(80px, calc(env(safe-area-inset-bottom) + 80px));
+      overflow-y: auto;
+    }
+    .onboard-step-indicator { display: flex; gap: 8px; margin-bottom: 32px; }
+    .step-dot {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--surface);
+      transition: all 0.4s;
+    }
+    .step-dot.active { background: var(--accent); }
+    .step-dot.done { background: rgba(200,169,110,0.5); }
+    .size-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 8px; }
+    .size-btn {
+      padding: 16px 8px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text2);
+    }
+    .size-btn.active { background: rgba(200,169,110,0.12); border-color: var(--accent); color: var(--accent2); }
+    .size-btn:hover:not(.active) { border-color: rgba(255,255,255,0.2); color: var(--text); }
+    .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .style-btn {
+      padding: 18px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+    }
+    .style-btn .style-icon { font-size: 28px; margin-bottom: 6px; }
+    .style-btn.active { background: rgba(200,169,110,0.12); border-color: var(--accent); color: var(--accent2); }
+
+    /* ===== TRY-ON PAGE ===== */
+    .tryon-container { flex: 1; display: flex; flex-direction: column; padding: 20px; gap: 16px; padding-bottom: 90px; }
+    .camera-frame {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      aspect-ratio: 3/4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #cameraVideo { width: 100%; height: 100%; object-fit: cover; }
+    .camera-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .camera-guide {
+      position: absolute;
+      inset: 12px;
+      border: 1.5px dashed rgba(200,169,110,0.4);
+      border-radius: 12px;
+    }
+    .camera-placeholder { text-align: center; padding: 20px; }
+    .tryon-outfit-strip { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+    .tryon-outfit-strip::-webkit-scrollbar { display: none; }
+    .tryon-outfit-thumb {
+      flex-shrink: 0;
+      width: 70px;
+      height: 90px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tryon-outfit-thumb.active { border-color: var(--accent); box-shadow: 0 0 16px rgba(200,169,110,0.3); }
+    .tryon-controls { display: flex; gap: 10px; }
+    .clothing-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 80px;
+      opacity: 0.85;
+      pointer-events: none;
+      transition: all 0.4s ease;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+    }
+
+    /* ===== PROFILE PAGE ===== */
+    .profile-header {
+      padding: 32px 20px 24px;
+      text-align: center;
+      position: relative;
+    }
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #c8a96e, #7c6fff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 16px;
+      box-shadow: 0 0 30px rgba(200,169,110,0.3);
+    }
+    .profile-name { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .profile-email { font-size: 13px; color: var(--text2); }
+    .profile-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; padding: 0 20px 20px; }
+    .profile-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .profile-stat-num { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--accent2); }
+    .profile-stat-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.08em; }
+    .profile-section { padding: 0 20px; margin-bottom: 24px; }
+    .profile-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text2); margin-bottom: 12px; }
+    .body-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .body-data-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+    .body-data-key { font-size: 11px; color: var(--text2); margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.07em; }
+    .body-data-val { font-size: 16px; font-weight: 700; font-family: var(--font-mono); }
+    .menu-list { display: flex; flex-direction: column; gap: 2px; }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--surface);
+      border: 1px solid var(--border);
+    }
+    .menu-item:hover { background: var(--bg3); }
+    .menu-item-icon { font-size: 18px; width: 24px; text-align: center; }
+    .menu-item-text { flex: 1; font-size: 14px; font-weight: 500; }
+    .menu-item-arrow { color: var(--text2); font-size: 13px; }
+
+    /* ===== AI CHAT ===== */
+    .chat-container { flex: 1; display: flex; flex-direction: column; max-height: 100dvh; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; padding-bottom: 100px; }
+    .chat-msg { max-width: 82%; }
+    .chat-msg-ai { align-self: flex-start; }
+    .chat-msg-user { align-self: flex-end; }
+    .chat-bubble {
+      padding: 13px 16px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .chat-bubble-ai {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+      color: var(--text);
+    }
+    .chat-bubble-user {
+      background: linear-gradient(135deg, #c8a96e, #e8c98e);
+      color: #0a0a0f;
+      border-bottom-right-radius: 4px;
+      font-weight: 500;
+    }
+    .chat-ai-name { font-size: 11px; color: var(--text2); margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+    .chat-input-bar {
+      position: fixed;
+      bottom: 66px;
+      left: 0;
+      right: 0;
+      padding: 12px 16px;
+      background: rgba(17,17,26,0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 11px 18px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      resize: none;
+      max-height: 100px;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-send-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      color: #0a0a0f;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .chat-send-btn:hover { transform: scale(1.08); background: var(--accent2); }
+    .typing-indicator { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+    .typing-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text2); animation: pulse 1.4s ease-in-out infinite; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    /* ===== PRODUCT DETAIL ===== */
+    .pd-img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 100px;
+      position: relative;
+    }
+    .pd-content { padding: 24px 20px; }
+    .pd-brand { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+    .pd-name { font-family: var(--font-display); font-size: 26px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
+    .pd-price { font-family: var(--font-mono); font-size: 26px; font-weight: 700; color: var(--accent2); margin-bottom: 20px; }
+    .pd-section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text2); margin-bottom: 10px; }
+    .pd-sizes { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .pd-size {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text2);
+    }
+    .pd-size.active { background: rgba(200,169,110,0.15); border-color: var(--accent); color: var(--accent2); }
+    .pd-size.recommended { border-color: var(--success); color: var(--success); background: rgba(67,233,123,0.06); }
+    .pd-colors { display: flex; gap: 10px; margin-bottom: 24px; }
+    .pd-color {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .pd-color.active { border-color: var(--accent); transform: scale(1.15); }
+    .pd-actions { display: flex; gap: 12px; margin-bottom: 32px; }
+    .pd-desc { font-size: 14px; color: var(--text2); line-height: 1.75; }
+
+    /* ===== CART ===== */
+    .cart-container { flex: 1; padding: 20px; padding-bottom: 100px; overflow-y: auto; }
+    .cart-item {
+      display: flex;
+      gap: 14px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+    }
+    .cart-item-img {
+      width: 72px;
+      height: 90px;
+      border-radius: 10px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+    .cart-item-size { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+    .cart-item-price { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--accent2); }
+    .qty-control { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .qty-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .qty-btn:hover { background: var(--bg3); }
+    .qty-num { font-family: var(--font-mono); font-size: 14px; font-weight: 700; min-width: 20px; text-align: center; }
+    .cart-summary {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+    .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 14px; }
+    .summary-row.total { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 16px; font-weight: 700; font-size: 16px; }
+    .summary-total-price { font-family: var(--font-mono); font-size: 20px; font-weight: 700; color: var(--accent2); }
+
+    /* ===== TOAST ===== */
+    .toast-container { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 9998; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+    .toast {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      animation: fadeUp 0.3s ease;
+    }
+
+    /* ===== MODAL ===== */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      display: none;
+      align-items: flex-end;
+    }
+    .modal-bg.open { display: flex; }
+    .modal-sheet {
+      width: 100%;
+      background: var(--bg2);
+      border-radius: 24px 24px 0 0;
+      border-top: 1px solid var(--border);
+      padding: 24px 20px max(32px, env(safe-area-inset-bottom));
+      animation: fadeUp 0.3s ease;
+    }
+    .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+
+    /* ===== LOADING ===== */
+    .loader {
+      width: 32px;
+      height: 32px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state { text-align: center; padding: 48px 20px; }
+    .empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.6; }
+    .empty-title { font-family: var(--font-display); font-size: 20px; margin-bottom: 8px; }
+    .empty-desc { font-size: 14px; color: var(--text2); margin-bottom: 24px; }
+
+    /* ===== SEARCH BAR ===== */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 11px 16px;
+      transition: all 0.2s;
+    }
+    .search-bar:focus-within { border-color: var(--accent); }
+    .search-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 14px;
+      font-family: var(--font-body);
+    }
+
+    /* ===== RECOMMENDATION STRIP ===== */
+    .rec-strip { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+    .rec-strip::-webkit-scrollbar { display: none; }
+    .rec-card {
+      flex-shrink: 0;
+      width: 140px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .rec-card:hover { border-color: rgba(200,169,110,0.25); transform: translateY(-2px); }
+    .rec-img { width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 44px; background: var(--surface); }
+    .rec-info { padding: 10px; }
+    .rec-name { font-size: 12px; font-weight: 600; margin-bottom: 3px; }
+    .rec-price { font-family: var(--font-mono); font-size: 12px; color: var(--accent2); }
+
+    /* ===== BACK BUTTON ===== */
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--text2);
+      cursor: pointer;
+      padding: 8px 0;
+      transition: color 0.2s;
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+    }
+    .back-btn:hover { color: var(--text); }
+
+    /* MISC */
+    .text-center { text-align: center; }
+    .mt-4 { margin-top: 16px; }
+    .mt-8 { margin-top: 32px; }
+    .mb-2 { margin-bottom: 8px; }
+    .gap-2 { gap: 8px; }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .flex-1 { flex: 1; }
+    .hidden { display: none !important; }
+    .relative { position: relative; }
+    .overflow-hidden { overflow: hidden; }
+    .w-full { width: 100%; }
+    .pb-safe { padding-bottom: max(80px, calc(env(safe-area-inset-bottom) + 80px)); }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!--  TOAST CONTAINER                                              -->
+<!-- ============================================================ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ============================================================ -->
+<!--  MODAL                                                        -->
+<!-- ============================================================ -->
+<div class="modal-bg" id="modalBg" onclick="closeModal()">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: AUTH                                                    -->
+<!-- ============================================================ -->
+<div class="page active" id="pageAuth">
+  <div class="auth-container">
+    <div class="auth-bg"></div>
+    <div class="auth-brand fade-up">
+      <div class="badge badge-gold mb-2">✦ AI-Powered Fashion</div>
+      <div class="auth-brand-name"><span class="gold-text">Looks At Life</span></div>
+      <div class="auth-brand-tagline">Wear your future. Defined by you.</div>
+    </div>
+    <!-- Floating product emojis -->
+    <div style="position:absolute;top:130px;right:24px;font-size:48px;opacity:0.12;animation:float 3s ease-in-out infinite;">👗</div>
+    <div style="position:absolute;top:200px;left:12px;font-size:36px;opacity:0.1;animation:float 4s 1s ease-in-out infinite;">👔</div>
+    <div style="position:absolute;top:280px;right:8px;font-size:28px;opacity:0.08;animation:float 3.5s 0.5s ease-in-out infinite;">👟</div>
+
+    <div class="auth-form-wrap fade-up-2">
+      <div class="auth-sheet">
+        <div class="auth-tabs">
+          <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Sign In</div>
+          <div class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Create Account</div>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="loginForm">
+          <div class="input-group">
+            <label class="input-label">Email</label>
+            <input class="input" type="email" id="loginEmail" placeholder="you@example.com" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <input class="input" type="password" id="loginPassword" placeholder="••••••••" />
+          </div>
+          <button class="btn btn-primary btn-full" onclick="handleLogin()" style="margin-top:8px;">
+            Sign In ✦
+          </button>
+          <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text2);">
+            Demo: any email + password works
+          </p>
+        </div>
+
+        <!-- REGISTER FORM -->
+        <div id="registerForm" class="hidden">
+          <div class="input-group">
+            <label class="input-label">Full Name</label>
+            <input class="input" type="text" id="regName" placeholder="Your name" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Email</label>
+            <input class="input" type="email" id="regEmail" placeholder="you@example.com" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">Password</label>
+            <input class="input" type="password" id="regPassword" placeholder="Create password" />
+          </div>
+          <button class="btn btn-primary btn-full" onclick="handleRegister()" style="margin-top:8px;">
+            Create Account ✦
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: ONBOARDING                                             -->
+<!-- ============================================================ -->
+<div class="page" id="pageOnboarding">
+  <div class="navbar">
+    <div class="logo"><span class="gold-text">LAL</span></div>
+    <div style="font-size:13px;color:var(--text2);" id="onboardStepLabel">Step 1 of 4</div>
+  </div>
+  <div class="onboard-wrap" id="onboardWrap">
+    <!-- Steps rendered by JS -->
+  </div>
+  <div style="position:fixed;bottom:0;left:0;right:0;padding:16px 20px;background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;gap:12px;">
+    <button class="btn btn-ghost flex-1" id="onboardBack" onclick="onboardPrev()" style="display:none;">Back</button>
+    <button class="btn btn-primary flex-1" id="onboardNext" onclick="onboardNext()">Continue →</button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: MAIN APP                                               -->
+<!-- ============================================================ -->
+<div class="page" id="pageApp">
+  <div class="navbar">
+    <div class="logo" onclick="goHome()"><span class="gold-text">Looks At Life</span></div>
+    <div class="nav-actions">
+      <div class="nav-icon-btn" onclick="goSearch()">🔍</div>
+      <div class="nav-icon-btn" onclick="goCart()">
+        🛒
+        <div class="nav-badge" id="cartBadge">0</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Home -->
+  <div id="tabHome" class="pb-safe" style="overflow-y:auto;flex:1;">
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-tag fade-up"><span class="badge badge-gold">✦ AI Stylist Active</span></div>
+      <h1 class="fade-up-2">Style That<br><span class="gold-text">Fits You</span></h1>
+      <p class="hero-sub fade-up-3">Virtual try-on. AI recommendations. Clothes that match your body and soul.</p>
+      <div class="hero-cta fade-up-4">
+        <button class="btn btn-primary" onclick="goTryOn()">🪄 Try On Virtually</button>
+        <button class="btn btn-ghost" onclick="goShop()">Explore Collection →</button>
+      </div>
+      <div class="hero-stats fade-up-4">
+        <div>
+          <div class="hero-stat-num gold-text">2K+</div>
+          <div class="hero-stat-label">Styles</div>
+        </div>
+        <div>
+          <div class="hero-stat-num gold-text">98%</div>
+          <div class="hero-stat-label">Fit Rate</div>
+        </div>
+        <div>
+          <div class="hero-stat-num gold-text">AI</div>
+          <div class="hero-stat-label">Matched</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="section">
+      <div class="section-title">Why <span class="gold-text">Looks At Life</span></div>
+      <div class="section-sub">Next-gen fashion technology</div>
+      <div class="features-grid">
+        <div class="feature-card fade-up" onclick="goTryOn()">
+          <div class="feature-icon float">🪞</div>
+          <div class="feature-title">Virtual Try-On</div>
+          <div class="feature-desc">See clothes on your body before buying</div>
+        </div>
+        <div class="feature-card fade-up-2" onclick="goTab('chat')">
+          <div class="feature-icon float" style="animation-delay:0.5s">🤖</div>
+          <div class="feature-title">AI Stylist</div>
+          <div class="feature-desc">Personal fashion assistant powered by AI</div>
+        </div>
+        <div class="feature-card fade-up-3">
+          <div class="feature-icon float" style="animation-delay:1s">📐</div>
+          <div class="feature-title">Perfect Fit</div>
+          <div class="feature-desc">Body data ensures exact size match</div>
+        </div>
+        <div class="feature-card fade-up-4">
+          <div class="feature-icon float" style="animation-delay:1.5s">✨</div>
+          <div class="feature-title">Trending</div>
+          <div class="feature-desc">Real-time style trend analysis</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Recommendations -->
+    <div class="section">
+      <div class="flex items-center justify-between mb-2">
+        <div>
+          <div class="section-title">Best Fit For <span class="gold-text">You</span></div>
+          <div class="section-sub">AI-matched to your body profile</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="goShop()">See All</button>
+      </div>
+      <div class="rec-strip" id="recStrip"></div>
+    </div>
+
+    <!-- Categories -->
+    <div class="section">
+      <div class="section-title">Collections</div>
+      <div class="section-sub">Curated for every style</div>
+      <div class="cat-scroll" id="homeCats" style="margin-bottom:20px;"></div>
+      <div class="product-grid" id="homeProducts"></div>
+    </div>
+
+    <!-- Outfit of the Day -->
+    <div class="section">
+      <div class="card" style="background:linear-gradient(135deg,rgba(200,169,110,0.1),rgba(124,111,255,0.08));border-color:rgba(200,169,110,0.2);">
+        <div class="badge badge-gold" style="margin-bottom:12px;">✦ AI Curated</div>
+        <div style="font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:6px;">Today's Outfit</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:16px;">AI-matched ensemble for your body & style</div>
+        <div style="display:flex;gap:16px;margin-bottom:16px;">
+          <div style="text-align:center"><div style="font-size:40px">👕</div><div style="font-size:11px;color:var(--text2)">Top</div></div>
+          <div style="text-align:center"><div style="font-size:40px">👖</div><div style="font-size:11px;color:var(--text2)">Bottom</div></div>
+          <div style="text-align:center"><div style="font-size:40px">👟</div><div style="font-size:11px;color:var(--text2)">Shoes</div></div>
+          <div style="text-align:center"><div style="font-size:40px">🧥</div><div style="font-size:11px;color:var(--text2)">Layer</div></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="showOutfitDetail()">View Complete Look →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Shop -->
+  <div id="tabShop" class="pb-safe" style="overflow-y:auto;flex:1;display:none;">
+    <div class="section" style="padding-bottom:0">
+      <div class="search-bar" style="margin-bottom:16px;">
+        <span>🔍</span>
+        <input type="text" placeholder="Search styles, brands..." id="shopSearch" oninput="filterProducts()" />
+      </div>
+      <div class="cat-scroll" id="shopCats" style="margin-bottom:20px;"></div>
+    </div>
+    <div class="section" style="padding-top:0">
+      <div class="product-grid" id="shopProducts"></div>
+    </div>
+  </div>
+
+  <!-- Tab: Try-On -->
+  <div id="tabTryOn" style="overflow-y:auto;flex:1;display:none;" class="pb-safe">
+    <div class="tryon-container">
+      <div style="margin-bottom:4px;">
+        <div class="section-title">Virtual <span class="gold-text">Try-On</span></div>
+        <div style="font-size:13px;color:var(--text2);">See how clothes look on you</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:4px;">
+        <button class="btn btn-ghost btn-sm flex-1" id="btnCamera" onclick="startCamera()">📷 Use Camera</button>
+        <button class="btn btn-ghost btn-sm flex-1" id="btnUpload" onclick="triggerUpload()">📤 Upload Photo</button>
+        <input type="file" id="photoUpload" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)"/>
+      </div>
+      <div class="camera-frame" id="cameraFrame">
+        <div class="camera-overlay" id="cameraOverlay">
+          <div class="camera-placeholder">
+            <div style="font-size:56px;margin-bottom:16px;opacity:0.4">🪞</div>
+            <div style="font-size:15px;font-weight:600;margin-bottom:8px;">Start Virtual Try-On</div>
+            <div style="font-size:13px;color:var(--text2)">Use your camera or upload a photo to see clothes on you</div>
+          </div>
+        </div>
+        <video id="cameraVideo" style="display:none;width:100%;height:100%;object-fit:cover;" autoplay playsinline muted></video>
+        <img id="uploadedPhoto" style="display:none;width:100%;height:100%;object-fit:cover;" />
+        <div class="camera-guide" id="cameraGuide" style="display:none;"></div>
+        <div class="clothing-overlay" id="clothingOverlay" style="display:none;"></div>
+        <div id="tryOnBadge" style="position:absolute;top:12px;left:12px;display:none;">
+          <span class="badge badge-gold">✦ AI Overlay Active</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text2);margin-bottom:10px;">Select Outfit to Try</div>
+        <div class="tryon-outfit-strip" id="tryonStrip"></div>
+      </div>
+      <div class="tryon-controls">
+        <button class="btn btn-ghost flex-1" onclick="clearTryOn()">✕ Clear</button>
+        <button class="btn btn-primary flex-1" id="tryOnAddCart" onclick="addTryOnToCart()">Add to Cart</button>
+      </div>
+      <div class="card" style="background:linear-gradient(135deg,rgba(124,111,255,0.08),rgba(200,169,110,0.06));">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;color:var(--accent2);">How It Works</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;">1. Select an outfit from the strip below the preview<br>2. Enable camera or upload your photo<br>3. The AI overlays the clothing on your image<br>4. Add to cart when you love the fit!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: AI Stylist Chat -->
+  <div id="tabChat" style="flex:1;display:none;flex-direction:column;" class="chat-container">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+      <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#c8a96e,#7c6fff);display:flex;align-items:center;justify-content:center;font-size:18px;animation:glow-pulse 2s ease-in-out infinite;">🤖</div>
+      <div>
+        <div style="font-weight:700;font-size:15px;">LALA — AI Stylist</div>
+        <div style="font-size:12px;color:var(--success);">● Online • Powered by Claude</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-bar">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask about styles, outfits, trends..." rows="1" onkeydown="handleChatKey(event)" oninput="autoResizeChat(this)"></textarea>
+      <button class="chat-send-btn" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+
+  <!-- Tab: Profile -->
+  <div id="tabProfile" style="overflow-y:auto;flex:1;display:none;" class="pb-safe">
+    <div class="profile-header">
+      <div class="avatar" id="profileAvatar">👤</div>
+      <div class="profile-name" id="profileName">User</div>
+      <div class="profile-email" id="profileEmail">user@example.com</div>
+      <div class="badge badge-gold" style="margin-top:8px;" id="profileSizeBadge">Size: —</div>
+    </div>
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <div class="profile-stat-num" id="profileOrders">0</div>
+        <div class="profile-stat-label">Orders</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-num" id="profileWishlist">0</div>
+        <div class="profile-stat-label">Saved</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-num" id="profileTryOns">3</div>
+        <div class="profile-stat-label">Try-Ons</div>
+      </div>
+    </div>
+    <div class="profile-section">
+      <div class="profile-section-title">Body Profile</div>
+      <div class="body-data-grid" id="bodyDataGrid"></div>
+    </div>
+    <div class="profile-section">
+      <div class="profile-section-title">Account</div>
+      <div class="menu-list">
+        <div class="menu-item" onclick="showOrders()"><span class="menu-item-icon">📦</span><span class="menu-item-text">My Orders</span><span class="menu-item-arrow">›</span></div>
+        <div class="menu-item" onclick="goWishlist()"><span class="menu-item-icon">❤️</span><span class="menu-item-text">Wishlist</span><span class="menu-item-arrow">›</span></div>
+        <div class="menu-item" onclick="editProfile()"><span class="menu-item-icon">✏️</span><span class="menu-item-text">Edit Body Profile</span><span class="menu-item-arrow">›</span></div>
+        <div class="menu-item" onclick="showSettings()"><span class="menu-item-icon">⚙️</span><span class="menu-item-text">Settings</span><span class="menu-item-arrow">›</span></div>
+        <div class="menu-item" onclick="handleLogout()" style="color:var(--danger);border-color:rgba(255,87,87,0.2);">
+          <span class="menu-item-icon">🚪</span><span class="menu-item-text" style="color:var(--danger);">Sign Out</span><span class="menu-item-arrow">›</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION -->
+  <div class="bottom-nav">
+    <div class="nav-tab active" id="navHome" onclick="goTab('home')">
+      <span class="tab-icon">🏠</span>Home
+    </div>
+    <div class="nav-tab" id="navShop" onclick="goTab('shop')">
+      <span class="tab-icon">👗</span>Shop
+    </div>
+    <div class="nav-tab" id="navTryOn" onclick="goTab('tryOn')">
+      <span class="tab-icon">🪞</span>Try-On
+    </div>
+    <div class="nav-tab" id="navChat" onclick="goTab('chat')">
+      <span class="tab-icon">🤖</span>Stylist
+    </div>
+    <div class="nav-tab" id="navProfile" onclick="goTab('profile')">
+      <span class="tab-icon">👤</span>Profile
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: PRODUCT DETAIL                                         -->
+<!-- ============================================================ -->
+<div class="page" id="pageProductDetail">
+  <div class="navbar">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="nav-actions">
+      <div class="nav-icon-btn" id="pdWishBtn" onclick="togglePdWish()">🤍</div>
+    </div>
+  </div>
+  <div style="overflow-y:auto;flex:1;padding-bottom:100px;">
+    <div class="pd-img" id="pdImg"><span style="font-size:100px;" id="pdEmoji">👗</span></div>
+    <div class="pd-content">
+      <div class="pd-brand" id="pdBrand">BRAND</div>
+      <div class="pd-name" id="pdName">Product Name</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div class="pd-price" id="pdPrice">₹0</div>
+        <span class="badge badge-green" id="pdFitBadge">✓ Fits You</span>
+      </div>
+      <div style="margin-bottom:16px;">
+        <div class="pd-section-label">Select Size</div>
+        <div class="pd-sizes" id="pdSizes"></div>
+        <div style="font-size:12px;color:var(--success);margin-top:6px;" id="pdSizeHint"></div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <div class="pd-section-label">Color</div>
+        <div class="pd-colors" id="pdColors"></div>
+      </div>
+      <div class="pd-actions">
+        <button class="btn btn-primary flex-1" onclick="addToCartFromDetail()">Add to Cart 🛒</button>
+        <button class="btn btn-ghost" onclick="goTryOnFromDetail()">🪞 Try On</button>
+      </div>
+      <div class="divider"></div>
+      <div style="margin-bottom:24px;">
+        <div class="pd-section-label">Description</div>
+        <div class="pd-desc" id="pdDesc"></div>
+      </div>
+      <div style="margin-bottom:24px;">
+        <div class="section-title" style="font-size:18px;margin-bottom:16px;">Similar <span class="gold-text">Styles</span></div>
+        <div class="rec-strip" id="similarStrip"></div>
+      </div>
+    </div>
+  </div>
+  <div style="position:fixed;bottom:0;left:0;right:0;padding:14px 20px;background:rgba(10,10,15,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);">
+    <button class="btn btn-primary btn-full" onclick="addToCartFromDetail()">Add to Cart — <span id="pdPriceBtn">₹0</span></button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: CART                                                    -->
+<!-- ============================================================ -->
+<div class="page" id="pageCart">
+  <div class="navbar">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div style="font-family:var(--font-display);font-weight:700;font-size:17px;">My Cart</div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="cart-container" id="cartContainer">
+    <div class="empty-state" id="cartEmpty">
+      <div class="empty-icon">🛒</div>
+      <div class="empty-title">Your Cart is Empty</div>
+      <div class="empty-desc">Add some amazing outfits to your cart!</div>
+      <button class="btn btn-primary" onclick="goBack()">Start Shopping →</button>
+    </div>
+    <div id="cartItems"></div>
+    <div id="cartSummaryWrap" style="display:none;margin-top:20px;">
+      <div class="cart-summary">
+        <div style="font-weight:700;font-size:16px;margin-bottom:12px;">Order Summary</div>
+        <div class="summary-row"><span style="color:var(--text2);">Subtotal</span><span id="cartSubtotal">₹0</span></div>
+        <div class="summary-row"><span style="color:var(--text2);">Delivery</span><span style="color:var(--success);">FREE</span></div>
+        <div class="summary-row"><span style="color:var(--text2);">AI Stylist Discount</span><span style="color:var(--success);">-₹200</span></div>
+        <div class="summary-row total">
+          <span>Total</span>
+          <span class="summary-total-price" id="cartTotal">₹0</span>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" style="margin-top:16px;" onclick="checkout()">Proceed to Checkout →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  PAGE: WISHLIST                                               -->
+<!-- ============================================================ -->
+<div class="page" id="pageWishlist">
+  <div class="navbar">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div style="font-family:var(--font-display);font-weight:700;font-size:17px;">Wishlist</div>
+    <div style="width:60px;"></div>
+  </div>
+  <div style="padding:20px;overflow-y:auto;flex:1;padding-bottom:100px;">
+    <div class="empty-state" id="wishlistEmpty">
+      <div class="empty-icon">❤️</div>
+      <div class="empty-title">No Saved Items</div>
+      <div class="empty-desc">Save outfits you love to your wishlist!</div>
+      <button class="btn btn-primary" onclick="goBack()">Browse Collections →</button>
+    </div>
+    <div class="product-grid" id="wishlistProducts"></div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!--  JS: APP LOGIC                                                -->
+<!-- ============================================================ -->
+<script>
+/* ============ DATA ============ */
+const PRODUCTS = [
+  { id:1, name:'Silk Evening Blazer', brand:'ARCANA', price:4299, emoji:'🥼', category:'Women', colors:['#1a1a2e','#c8a96e','#8b0000'], sizes:['XS','S','M','L','XL'], rating:4.8, desc:'Luxurious silk-blend blazer with a structured silhouette. Perfect for evening events and power meetings. Features hidden pockets and a flattering cinched waist design.', trend:true },
+  { id:2, name:'Urban Cargo Joggers', brand:'STRIDE', price:2199, emoji:'👖', category:'Men', colors:['#2d2d2d','#556b2f','#4a3728'], sizes:['S','M','L','XL','XXL'], rating:4.6, desc:'Modern cargo joggers with technical fabric. Multiple utility pockets, elastic cuffs, and moisture-wicking lining. The perfect blend of style and function.', trend:true },
+  { id:3, name:'Cottagecore Midi Dress', brand:'BLOOM', price:3499, emoji:'👗', category:'Women', colors:['#f5e6d3','#b5c4a1','#e8b4b8'], sizes:['XS','S','M','L'], rating:4.9, desc:'Flowy midi dress with delicate floral embroidery. Made from breathable cotton blend. Features adjustable straps and a smocked back for the perfect fit.', trend:true },
+  { id:4, name:'Structured Linen Shirt', brand:'FORME', price:1899, emoji:'👔', category:'Men', colors:['#f5f0e8','#4a90d9','#2d2d2d'], sizes:['S','M','L','XL','XXL','XXXL'], rating:4.5, desc:'Premium linen shirt with an architectural collar. Slightly oversized fit, single-button cuffs, and a curved hemline. Transitions effortlessly from casual to formal.', trend:false },
+  { id:5, name:'Chunky Knit Cardigan', brand:'WOVEN', price:2799, emoji:'🧥', category:'Women', colors:['#c4a882','#d4c5b0','#8b7355'], sizes:['S','M','L','XL'], rating:4.7, desc:'Oversized chunky knit cardigan with deep pockets. Made from a soft wool-acrylic blend. Features tortoise-shell buttons and ribbed cuffs and hem.', trend:true },
+  { id:6, name:'Performance Jogger Set', brand:'KINETIC', price:3299, emoji:'🩱', category:'Trending', colors:['#1a1a2e','#7c6fff','#c8a96e'], sizes:['XS','S','M','L','XL'], rating:4.8, desc:'Matching set with coordinated top and joggers in moisture-wicking 4-way stretch fabric. Seamless construction for comfort during workouts and beyond.', trend:true },
+  { id:7, name:'Wide Leg Palazzo Pants', brand:'DRAPE', price:2599, emoji:'👚', category:'Women', colors:['#2d1b4e','#c8a96e','#1a3a2e'], sizes:['XS','S','M','L','XL'], rating:4.6, desc:'Dramatic wide-leg palazzo pants in flowing crepe fabric. High-waisted cut with a button-fly closure. Move with confidence in every step.', trend:true },
+  { id:8, name:'Technical Track Jacket', brand:'MOTION', price:4599, emoji:'🧦', category:'Men', colors:['#1a1a2e','#2d4a2d','#4a2d1a'], sizes:['S','M','L','XL','XXL'], rating:4.7, desc:'Precision-engineered track jacket with laser-cut ventilation panels. Four-way stretch fabric, recycled materials, and a streamlined zip-front closure.', trend:false },
+];
+
+const CHAT_RESPONSES = {
+  greeting: ["Hey! I'm LALA, your AI fashion stylist! 👗✨ I know your body measurements and style preferences. How can I help you dress amazingly today?"],
+  size:["Based on your profile, you're a perfect <b>Medium</b>! I recommend going up a size for oversized looks or structured blazers for the best fit."],
+  color:["With your style profile, I'd recommend <b>earthy tones</b> like camel, rust, and olive — they complement naturally well. For bold statements, deep navy and burgundy are your power colors! 🎨"],
+  trend:["This season's hottest trends: <b>Quiet Luxury</b> (clean minimal lines), <b>Dopamine Dressing</b> (bold color combos), and <b>Utility Chic</b> (functional pockets, cargo details). Want me to find specific pieces?"],
+  outfit:["For a complete look, I'd suggest: 👕 Structured Linen Shirt + 👖 Cargo Joggers + 👟 Clean white sneakers. Mix textures — the linen adds sophistication while the joggers keep it relaxed. Perfect 10/10 outfit!"],
+  default:["Great question! Based on your body measurements and style history, I'd recommend exploring our <b>Trending</b> section — there are 3 pieces that are a near-perfect match for you! Want me to show you?","I love your style instincts! 🌟 Let me analyze that for you... Based on your preferences, I think the <b>Cottagecore Midi Dress</b> or the <b>Wide Leg Palazzo Pants</b> would look stunning on you. Both are in stock in your size!","Fashion tip: Always dress for your body, not the trend. That said, the <b>Performance Jogger Set</b> is incredibly versatile and would work perfectly with your measurements. Want to try it on virtually?"]
+};
+
+/* ============ STATE ============ */
+let state = {
+  user: null,
+  bodyData: {},
+  cart: [],
+  wishlist: [],
+  currentPage: 'auth',
+  prevPage: null,
+  currentProduct: null,
+  selectedSize: null,
+  selectedColor: null,
+  activeCategory: 'All',
+  cameraStream: null,
+  selectedTryOnItem: null,
+  chatHistory: [],
+  onboardStep: 1,
+  onboardData: {}
+};
+
+/* ============ INIT ============ */
+window.onload = () => {
+  const saved = localStorage.getItem('lal_user');
+  if (saved) {
+    state.user = JSON.parse(saved);
+    state.bodyData = JSON.parse(localStorage.getItem('lal_body') || '{}');
+    state.cart = JSON.parse(localStorage.getItem('lal_cart') || '[]');
+    state.wishlist = JSON.parse(localStorage.getItem('lal_wish') || '[]');
+    if (state.bodyData && state.bodyData.size) {
+      showPage('pageApp');
+      renderApp();
+    } else {
+      showPage('pageOnboarding');
+      renderOnboarding();
+    }
+  }
+};
+
+/* ============ PAGES ============ */
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById(pageId);
+  if (page) { page.classList.add('active'); page.style.display = 'flex'; }
+  state.prevPage = state.currentPage;
+  state.currentPage = pageId;
+  if (state.cameraStream && pageId !== 'pageApp') stopCamera();
+}
+
+function goBack() {
+  if (state.prevPage) showPage(state.prevPage);
+  else showPage('pageApp');
+}
+
+/* ============ AUTH ============ */
+function switchAuthTab(tab) {
+  document.getElementById('tabLogin').classList.toggle('active', tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active', tab==='register');
+  document.getElementById('loginForm').classList.toggle('hidden', tab!=='login');
+  document.getElementById('registerForm').classList.toggle('hidden', tab!=='register');
+}
+
+function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value.trim();
+  if (!email || !pass) { showToast('⚠️ Please fill in all fields'); return; }
+  state.user = { name: email.split('@')[0], email };
+  saveUser();
+  const body = JSON.parse(localStorage.getItem('lal_body')||'{}');
+  state.bodyData = body;
+  if (body && body.size) { showPage('pageApp'); renderApp(); }
+  else { showPage('pageOnboarding'); renderOnboarding(); }
+}
+
+function handleRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPassword').value.trim();
+  if (!name||!email||!pass) { showToast('⚠️ Please fill all fields'); return; }
+  state.user = { name, email };
+  saveUser();
+  showPage('pageOnboarding');
+  renderOnboarding();
+}
+
+function handleLogout() {
+  stopCamera();
+  state.user = null; state.bodyData = {};
+  localStorage.removeItem('lal_user');
+  showPage('pageAuth');
+  showToast('👋 Signed out successfully');
+}
+
+function saveUser() {
+  localStorage.setItem('lal_user', JSON.stringify(state.user));
+}
+
+/* ============ ONBOARDING ============ */
+const ONBOARD_STEPS = [
+  {
+    title: 'Welcome, ',
+    subtitle: "Let's set up your style profile so AI can find your perfect fit.",
+    type: 'size'
+  },
+  { title: 'Your Measurements', subtitle: 'Help us fit clothes perfectly to your body.', type: 'measurements' },
+  { title: 'Your Style Vibe', subtitle: 'Pick styles that resonate with you.', type: 'style' },
+  { title: "You're All Set! ✨", subtitle: 'Your AI stylist is ready. Let\'s explore your perfect wardrobe.', type: 'done' }
+];
+
+function renderOnboarding() {
+  const step = state.onboardStep;
+  const s = ONBOARD_STEPS[step-1];
+  document.getElementById('onboardStepLabel').textContent = `Step ${step} of 4`;
+  document.getElementById('onboardBack').style.display = step > 1 ? 'block' : 'none';
+  document.getElementById('onboardNext').textContent = step === 4 ? '✦ Start Shopping' : 'Continue →';
+
+  let html = `<div class="onboard-step-indicator">`;
+  for(let i=1;i<=4;i++) html += `<div class="step-dot ${i<step?'done':''} ${i===step?'active':''}"></div>`;
+  html += `</div>`;
+
+  html += `<div class="fade-up"><h2 style="font-family:var(--font-display);font-size:26px;font-weight:800;margin-bottom:8px;line-height:1.2;">${s.title}${step===1&&state.user?'<span class="gold-text">'+state.user.name.split(' ')[0]+'</span>':''}</h2>
+  <p style="font-size:14px;color:var(--text2);margin-bottom:28px;">${s.subtitle}</p></div>`;
+
+  if (s.type === 'size') {
+    html += `<div class="fade-up-2"><div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);margin-bottom:12px;">Clothing Size</div>
+    <div class="size-grid">`;
+    ['XS','S','M','L','XL','XXL'].forEach(sz => {
+      html += `<div class="size-btn ${state.onboardData.size===sz?'active':''}" onclick="selectSize('${sz}')">${sz}</div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  if (s.type === 'measurements') {
+    html += `<div class="fade-up-2">
+    <div class="input-group"><label class="input-label">Height (cm)</label>
+    <input class="input" type="number" id="obHeight" placeholder="e.g. 170" value="${state.onboardData.height||''}" /></div>
+    <div class="input-group"><label class="input-label">Weight (kg)</label>
+    <input class="input" type="number" id="obWeight" placeholder="e.g. 65" value="${state.onboardData.weight||''}" /></div>
+    <div class="input-group"><label class="input-label">Shoulder Width (cm) — Optional</label>
+    <input class="input" type="number" id="obShoulder" placeholder="e.g. 42" value="${state.onboardData.shoulder||''}" /></div>
+    <div class="input-group"><label class="input-label">Chest / Bust (cm) — Optional</label>
+    <input class="input" type="number" id="obChest" placeholder="e.g. 92" value="${state.onboardData.chest||''}" /></div>
+    </div>`;
+  }
+
+  if (s.type === 'style') {
+    const styles = [
+      {k:'casual',l:'Casual',i:'👕'},{k:'formal',l:'Formal',i:'👔'},
+      {k:'streetwear',l:'Streetwear',i:'🧢'},{k:'boho',l:'Boho',i:'🌸'},
+      {k:'athleisure',l:'Athleisure',i:'🏃'},{k:'luxury',l:'Luxury',i:'✨'}
+    ];
+    const sel = state.onboardData.styles || [];
+    html += `<div class="fade-up-2"><div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Pick all that apply</div><div class="style-grid">`;
+    styles.forEach(st => {
+      html += `<div class="style-btn ${sel.includes(st.k)?'active':''}" onclick="toggleStyle('${st.k}')">
+      <div class="style-icon">${st.i}</div>${st.l}</div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  if (s.type === 'done') {
+    html += `<div class="fade-up-2" style="text-align:center;padding:20px 0;">
+    <div style="font-size:72px;margin-bottom:20px;animation:float 3s ease-in-out infinite;">🎉</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:left;margin-bottom:20px;">
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text2);margin-bottom:14px;">Your Profile</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        ${[['Size',state.onboardData.size||'—'],['Height',state.onboardData.height?state.onboardData.height+'cm':'—'],
+          ['Weight',state.onboardData.weight?state.onboardData.weight+'kg':'—'],['Style',(state.onboardData.styles||[]).join(', ')||'—']]
+          .map(([k,v])=>`<div style="background:var(--bg3);border-radius:10px;padding:12px;"><div style="font-size:10px;color:var(--text2);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.07em;">${k}</div><div style="font-weight:700;font-size:15px;">${v}</div></div>`).join('')}
+      </div>
+    </div></div>`;
+  }
+
+  document.getElementById('onboardWrap').innerHTML = html;
+}
+
+function selectSize(sz) {
+  state.onboardData.size = sz;
+  renderOnboarding();
+}
+
+function toggleStyle(k) {
+  if (!state.onboardData.styles) state.onboardData.styles = [];
+  const idx = state.onboardData.styles.indexOf(k);
+  if (idx>-1) state.onboardData.styles.splice(idx,1);
+  else state.onboardData.styles.push(k);
+  renderOnboarding();
+}
+
+function onboardNext() {
+  const step = state.onboardStep;
+  if (step===1 && !state.onboardData.size) { showToast('⚠️ Please select your size'); return; }
+  if (step===2) {
+    const h = document.getElementById('obHeight')?.value;
+    const w = document.getElementById('obWeight')?.value;
+    if (!h||!w) { showToast('⚠️ Height and weight are required'); return; }
+    state.onboardData.height = h;
+    state.onboardData.weight = w;
+    state.onboardData.shoulder = document.getElementById('obShoulder')?.value;
+    state.onboardData.chest = document.getElementById('obChest')?.value;
+  }
+  if (step===4) {
+    state.bodyData = state.onboardData;
+    localStorage.setItem('lal_body', JSON.stringify(state.bodyData));
+    state.cart = []; state.wishlist = [];
+    showPage('pageApp');
+    renderApp();
+    showToast('✦ Profile saved! Welcome to Looks At Life');
+    return;
+  }
+  state.onboardStep++;
+  renderOnboarding();
+}
+
+function onboardPrev() {
+  if (state.onboardStep > 1) { state.onboardStep--; renderOnboarding(); }
+}
+
+/* ============ APP ============ */
+function renderApp() {
+  updateCartBadge();
+  renderCategories();
+  renderHomeProducts();
+  renderRecStrip();
+  renderTryOnStrip();
+  renderProfile();
+  renderChat();
+}
+
+function goHome() { goTab('home'); }
+function goShop() { goTab('shop'); }
+function goTryOn() { goTab('tryOn'); }
+function goSearch() { goTab('shop'); document.getElementById('shopSearch')?.focus(); }
+function goCart() { renderCart(); showPage('pageCart'); }
+function goWishlist() { renderWishlist(); showPage('pageWishlist'); }
+
+function goTab(tab) {
+  const tabs = ['home','shop','tryOn','chat','profile'];
+  const tabIds = { home:'tabHome', shop:'tabShop', tryOn:'tabTryOn', chat:'tabChat', profile:'tabProfile' };
+  const navIds = { home:'navHome', shop:'navShop', tryOn:'navTryOn', chat:'navChat', profile:'navProfile' };
+  tabs.forEach(t => {
+    const el = document.getElementById(tabIds[t]);
+    if (el) el.style.display = (t===tab) ? 'flex' : 'none';
+    document.getElementById(navIds[t])?.classList.toggle('active', t===tab);
+  });
+  if (tab==='profile') renderProfile();
+}
+
+function goTryOnFromDetail() {
+  state.selectedTryOnItem = state.currentProduct;
+  showPage('pageApp');
+  goTab('tryOn');
+  renderTryOnStrip();
+  setTimeout(() => {
+    const thumbs = document.querySelectorAll('.tryon-outfit-thumb');
+    thumbs.forEach(t => {
+      if (parseInt(t.dataset.id)===state.currentProduct?.id) {
+        t.classList.add('active');
+        overlayClothing(state.currentProduct.emoji);
+      }
+    });
+  }, 100);
+}
+
+/* ============ CATEGORIES ============ */
+function renderCategories() {
+  const cats = ['All','Men','Women','Trending'];
+  const hcEl = document.getElementById('homeCats');
+  const scEl = document.getElementById('shopCats');
+  const html = cats.map(c => `<div class="cat-chip ${c===state.activeCategory?'active':''}" onclick="selectCat('${c}')">${c}</div>`).join('');
+  if (hcEl) hcEl.innerHTML = html;
+  if (scEl) scEl.innerHTML = html;
+}
+
+function selectCat(c) {
+  state.activeCategory = c;
+  renderCategories();
+  renderHomeProducts();
+  renderShopProducts();
+}
+
+/* ============ PRODUCTS ============ */
+function getFilteredProducts() {
+  let p = PRODUCTS;
+  if (state.activeCategory !== 'All') p = p.filter(x => x.category === state.activeCategory || (state.activeCategory==='Trending'&&x.trend));
+  const q = document.getElementById('shopSearch')?.value.toLowerCase();
+  if (q) p = p.filter(x => x.name.toLowerCase().includes(q)||x.brand.toLowerCase().includes(q)||x.category.toLowerCase().includes(q));
+  return p;
+}
+
+function renderHomeProducts() {
+  const el = document.getElementById('homeProducts');
+  if (!el) return;
+  el.innerHTML = getFilteredProducts().slice(0,6).map(p => productCardHTML(p)).join('');
+}
+
+function renderShopProducts() {
+  const el = document.getElementById('shopProducts');
+  if (!el) return;
+  el.innerHTML = getFilteredProducts().map(p => productCardHTML(p)).join('');
+}
+
+function filterProducts() {
+  renderShopProducts();
+}
+
+function productCardHTML(p) {
+  const isWished = state.wishlist.includes(p.id);
+  const userSize = state.bodyData?.size || 'M';
+  const fits = p.sizes.includes(userSize);
+  const colors = p.colors.map(c => `<div class="color-dot" style="background:${c};"></div>`).join('');
+  return `<div class="product-card" onclick="openProduct(${p.id})">
+    <div class="product-img-bg" style="background:linear-gradient(135deg,${p.colors[0]}22,${p.colors[1]||p.colors[0]}33);">
+      <span style="font-size:56px;">${p.emoji}</span>
+      <div class="product-wishlist ${isWished?'active':''}" onclick="toggleWish(event,${p.id})">${isWished?'❤️':'🤍'}</div>
+      ${fits?`<div class="product-fit-badge"><span class="badge badge-green" style="font-size:9px;">✓ Your Size</span></div>`:''}
+    </div>
+    <div class="product-info">
+      <div class="product-brand">${p.brand}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-price-row">
+        <div class="product-price">₹${p.price.toLocaleString()}</div>
+        <div class="product-rating">⭐ ${p.rating}</div>
+      </div>
+      <div class="product-colors">${colors}</div>
+    </div>
+  </div>`;
+}
+
+function renderRecStrip() {
+  const el = document.getElementById('recStrip');
+  if (!el) return;
+  const userSize = state.bodyData?.size||'M';
+  const recs = PRODUCTS.filter(p=>p.sizes.includes(userSize)).slice(0,6);
+  el.innerHTML = recs.map(p=>`<div class="rec-card" onclick="openProduct(${p.id})">
+    <div class="rec-img" style="background:linear-gradient(135deg,${p.colors[0]}22,${p.colors[1]||p.colors[0]}33);">${p.emoji}</div>
+    <div class="rec-info"><div class="rec-name">${p.name}</div><div class="rec-price">₹${p.price.toLocaleString()}</div></div>
+  </div>`).join('');
+}
+
+/* ============ PRODUCT DETAIL ============ */
+function openProduct(id) {
+  const p = PRODUCTS.find(x=>x.id===id);
+  if (!p) return;
+  state.currentProduct = p;
+  state.selectedSize = state.bodyData?.size || p.sizes[0];
+  state.selectedColor = 0;
+  document.getElementById('pdEmoji').textContent = p.emoji;
+  document.getElementById('pdImg').style.background = `linear-gradient(135deg,${p.colors[0]}33,${p.colors[1]||p.colors[0]}22)`;
+  document.getElementById('pdBrand').textContent = p.brand;
+  document.getElementById('pdName').textContent = p.name;
+  document.getElementById('pdPrice').textContent = `₹${p.price.toLocaleString()}`;
+  document.getElementById('pdPriceBtn').textContent = `₹${p.price.toLocaleString()}`;
+  document.getElementById('pdDesc').textContent = p.desc;
+  const userSize = state.bodyData?.size || 'M';
+  document.getElementById('pdSizeHint').textContent = userSize&&p.sizes.includes(userSize)?`✓ ${userSize} is your recommended size based on your profile`:'';
+  const isWished = state.wishlist.includes(p.id);
+  document.getElementById('pdWishBtn').textContent = isWished ? '❤️' : '🤍';
+  document.getElementById('pdSizes').innerHTML = p.sizes.map(sz=>
+    `<div class="pd-size ${sz===state.selectedSize?'active':''} ${sz===userSize?'recommended':''}" onclick="selectPdSize('${sz}')">${sz}</div>`
+  ).join('');
+  document.getElementById('pdColors').innerHTML = p.colors.map((c,i)=>
+    `<div class="pd-color ${i===state.selectedColor?'active':''}" style="background:${c};" onclick="selectPdColor(${i})"></div>`
+  ).join('');
+  const similar = PRODUCTS.filter(x=>x.id!==id&&(x.category===p.category||x.trend===p.trend)).slice(0,5);
+  document.getElementById('similarStrip').innerHTML = similar.map(s=>
+    `<div class="rec-card" onclick="openProduct(${s.id})">
+      <div class="rec-img" style="background:linear-gradient(135deg,${s.colors[0]}22,${s.colors[1]||s.colors[0]}33);">${s.emoji}</div>
+      <div class="rec-info"><div class="rec-name">${s.name}</div><div class="rec-price">₹${s.price.toLocaleString()}</div></div>
+    </div>`
+  ).join('');
+  showPage('pageProductDetail');
+}
+
+function selectPdSize(sz) {
+  state.selectedSize = sz;
+  document.querySelectorAll('.pd-size').forEach(el => el.classList.toggle('active', el.textContent===sz));
+}
+
+function selectPdColor(i) {
+  state.selectedColor = i;
+  document.querySelectorAll('.pd-color').forEach((el,idx) => el.classList.toggle('active', idx===i));
+}
+
+function togglePdWish() {
+  if (!state.currentProduct) return;
+  toggleWishById(state.currentProduct.id);
+  document.getElementById('pdWishBtn').textContent = state.wishlist.includes(state.currentProduct.id)?'❤️':'🤍';
+}
+
+function addToCartFromDetail() {
+  if (!state.currentProduct) return;
+  addToCart(state.currentProduct, state.selectedSize);
+}
+
+/* ============ CART ============ */
+function addToCart(product, size) {
+  const existing = state.cart.find(i=>i.id===product.id&&i.size===size);
+  if (existing) { existing.qty++; }
+  else { state.cart.push({id:product.id,name:product.name,emoji:product.emoji,price:product.price,size:size||'M',qty:1}); }
+  localStorage.setItem('lal_cart', JSON.stringify(state.cart));
+  updateCartBadge();
+  showToast(`✓ ${product.name} added to cart`);
+}
+
+function addTryOnToCart() {
+  if (state.selectedTryOnItem) addToCart(state.selectedTryOnItem, state.bodyData?.size||'M');
+  else showToast('⚠️ Select an outfit to try on first');
+}
+
+function updateCartBadge() {
+  const total = state.cart.reduce((s,i)=>s+i.qty,0);
+  const badge = document.getElementById('cartBadge');
+  if (badge) badge.textContent = total;
+}
+
+function renderCart() {
+  const items = document.getElementById('cartItems');
+  const empty = document.getElementById('cartEmpty');
+  const summary = document.getElementById('cartSummaryWrap');
+  if (!state.cart.length) {
+    empty.style.display='flex'; items.innerHTML=''; summary.style.display='none'; return;
+  }
+  empty.style.display='none'; summary.style.display='block';
+  items.innerHTML = state.cart.map((item,idx)=>`<div class="cart-item">
+    <div class="cart-item-img">${item.emoji}</div>
+    <div class="cart-item-info">
+      <div class="cart-item-name">${item.name}</div>
+      <div class="cart-item-size">Size: ${item.size}</div>
+      <div class="cart-item-price">₹${(item.price*item.qty).toLocaleString()}</div>
+      <div class="qty-control">
+        <div class="qty-btn" onclick="changeQty(${idx},-1)">−</div>
+        <div class="qty-num">${item.qty}</div>
+        <div class="qty-btn" onclick="changeQty(${idx},1)">+</div>
+      </div>
+    </div>
+    <div style="cursor:pointer;font-size:18px;color:var(--text2);" onclick="removeCart(${idx})">✕</div>
+  </div>`).join('');
+  const sub = state.cart.reduce((s,i)=>s+i.price*i.qty,0);
+  document.getElementById('cartSubtotal').textContent = `₹${sub.toLocaleString()}`;
+  document.getElementById('cartTotal').textContent = `₹${Math.max(0,sub-200).toLocaleString()}`;
+}
+
+function changeQty(idx, delta) {
+  state.cart[idx].qty = Math.max(1, state.cart[idx].qty + delta);
+  localStorage.setItem('lal_cart', JSON.stringify(state.cart));
+  updateCartBadge();
+  renderCart();
+}
+
+function removeCart(idx) {
+  state.cart.splice(idx,1);
+  localStorage.setItem('lal_cart', JSON.stringify(state.cart));
+  updateCartBadge();
+  renderCart();
+}
+
+function checkout() {
+  openModal(`<div style="text-align:center;padding:10px 0;">
+    <div style="font-size:56px;margin-bottom:16px;">🎉</div>
+    <div style="font-family:var(--font-display);font-size:22px;font-weight:700;margin-bottom:8px;">Order Placed!</div>
+    <div style="font-size:14px;color:var(--text2);margin-bottom:20px;">Your AI-curated wardrobe is on its way!</div>
+    <div class="badge badge-gold" style="margin-bottom:20px;">Estimated delivery: 3-5 days</div>
+    <button class="btn btn-primary btn-full" onclick="closeModal();state.cart=[];localStorage.removeItem('lal_cart');updateCartBadge();goBack();renderCart();">Continue Shopping →</button>
+  </div>`);
+}
+
+/* ============ WISHLIST ============ */
+function toggleWish(event, id) {
+  event.stopPropagation();
+  toggleWishById(id);
+  renderHomeProducts();
+  renderShopProducts();
+}
+
+function toggleWishById(id) {
+  const idx = state.wishlist.indexOf(id);
+  if (idx>-1) { state.wishlist.splice(idx,1); showToast('Removed from wishlist'); }
+  else { state.wishlist.push(id); showToast('❤️ Saved to wishlist'); }
+  localStorage.setItem('lal_wish', JSON.stringify(state.wishlist));
+}
+
+function renderWishlist() {
+  const el = document.getElementById('wishlistProducts');
+  const empty = document.getElementById('wishlistEmpty');
+  const products = PRODUCTS.filter(p=>state.wishlist.includes(p.id));
+  empty.style.display = products.length?'none':'flex';
+  el.innerHTML = products.map(p=>productCardHTML(p)).join('');
+}
+
+/* ============ PROFILE ============ */
+function renderProfile() {
+  if (!state.user) return;
+  const nameEl = document.getElementById('profileName');
+  const emailEl = document.getElementById('profileEmail');
+  const avatarEl = document.getElementById('profileAvatar');
+  const sizeEl = document.getElementById('profileSizeBadge');
+  if (nameEl) nameEl.textContent = state.user.name;
+  if (emailEl) emailEl.textContent = state.user.email;
+  if (avatarEl) avatarEl.textContent = state.user.name[0].toUpperCase();
+  if (sizeEl) sizeEl.textContent = `Size: ${state.bodyData?.size||'—'}`;
+  document.getElementById('profileOrders').textContent = state.cart.length;
+  document.getElementById('profileWishlist').textContent = state.wishlist.length;
+
+  const bodyGrid = document.getElementById('bodyDataGrid');
+  if (bodyGrid && state.bodyData) {
+    const fields = [['Size',state.bodyData.size||'—'],['Height',state.bodyData.height?(state.bodyData.height+'cm'):'—'],
+      ['Weight',state.bodyData.weight?(state.bodyData.weight+'kg'):'—'],
+      ['Shoulder',state.bodyData.shoulder?(state.bodyData.shoulder+'cm'):'—'],
+      ['Chest',state.bodyData.chest?(state.bodyData.chest+'cm'):'—'],
+      ['Style',(state.bodyData.styles||[]).join(', ')||'—']];
+    bodyGrid.innerHTML = fields.map(([k,v])=>`<div class="body-data-item"><div class="body-data-key">${k}</div><div class="body-data-val">${v}</div></div>`).join('');
+  }
+}
+
+function showOrders() {
+  openModal(`<div style="font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:16px;">My Orders</div>
+  <div style="text-align:center;padding:24px 0;color:var(--text2);">
+    <div style="font-size:48px;margin-bottom:12px;opacity:0.5;">📦</div>
+    <div>No orders yet. Start shopping!</div>
+  </div>`);
+}
+
+function editProfile() {
+  state.onboardStep = 1;
+  state.onboardData = {...state.bodyData};
+  showPage('pageOnboarding');
+  renderOnboarding();
+}
+
+function showSettings() {
+  openModal(`<div style="font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:20px;">Settings</div>
+  <div class="menu-list">
+    <div class="menu-item"><span class="menu-item-icon">🔔</span><span class="menu-item-text">Notifications</span><span class="menu-item-arrow">›</span></div>
+    <div class="menu-item"><span class="menu-item-icon">🌙</span><span class="menu-item-text">Dark Mode (Default)</span><span class="badge badge-gold" style="font-size:10px;">ON</span></div>
+    <div class="menu-item"><span class="menu-item-icon">🔒</span><span class="menu-item-text">Privacy</span><span class="menu-item-arrow">›</span></div>
+    <div class="menu-item"><span class="menu-item-icon">ℹ️</span><span class="menu-item-text">About Looks At Life v1.0</span><span class="menu-item-arrow">›</span></div>
+  </div>`);
+}
+
+/* ============ TRY-ON ============ */
+function renderTryOnStrip() {
+  const el = document.getElementById('tryonStrip');
+  if (!el) return;
+  el.innerHTML = PRODUCTS.slice(0,8).map(p=>`<div class="tryon-outfit-thumb ${state.selectedTryOnItem?.id===p.id?'active':''}" data-id="${p.id}" 
+    onclick="selectTryOnItem(${p.id})" style="background:linear-gradient(135deg,${p.colors[0]}33,${p.colors[1]||p.colors[0]}22);">${p.emoji}</div>`).join('');
+}
+
+function selectTryOnItem(id) {
+  const p = PRODUCTS.find(x=>x.id===id);
+  state.selectedTryOnItem = p;
+  renderTryOnStrip();
+  overlayClothing(p.emoji);
+  showToast(`👗 ${p.name} selected`);
+}
+
+function overlayClothing(emoji) {
+  const hasMedia = document.getElementById('cameraVideo').style.display!=='none'||document.getElementById('uploadedPhoto').style.display!=='none';
+  const overlayEl = document.getElementById('clothingOverlay');
+  const guideEl = document.getElementById('cameraGuide');
+  const badgeEl = document.getElementById('tryOnBadge');
+  if (hasMedia) {
+    overlayEl.textContent = emoji;
+    overlayEl.style.display = 'block';
+    guideEl.style.display = 'block';
+    badgeEl.style.display = 'block';
+  } else {
+    overlayEl.textContent = emoji;
+    overlayEl.style.display = 'block';
+    document.getElementById('cameraOverlay').style.display = 'none';
+    showToast('📷 Enable camera or upload photo for full try-on');
+  }
+}
+
+async function startCamera() {
+  try {
+    if (state.cameraStream) { stopCamera(); return; }
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+    state.cameraStream = stream;
+    const video = document.getElementById('cameraVideo');
+    video.srcObject = stream;
+    video.style.display = 'block';
+    document.getElementById('cameraOverlay').style.display = 'none';
+    document.getElementById('cameraGuide').style.display = 'block';
+    document.getElementById('btnCamera').textContent = '🔴 Stop Camera';
+    if (state.selectedTryOnItem) {
+      document.getElementById('clothingOverlay').textContent = state.selectedTryOnItem.emoji;
+      document.getElementById('clothingOverlay').style.display = 'block';
+      document.getElementById('tryOnBadge').style.display = 'block';
+    }
+    showToast('📷 Camera active — select an outfit above!');
+  } catch(e) {
+    showToast('⚠️ Camera access denied. Please allow camera access.');
+  }
+}
+
+function stopCamera() {
+  if (state.cameraStream) {
+    state.cameraStream.getTracks().forEach(t=>t.stop());
+    state.cameraStream = null;
+  }
+  document.getElementById('cameraVideo').style.display = 'none';
+  document.getElementById('btnCamera').textContent = '📷 Use Camera';
+}
+
+function triggerUpload() {
+  document.getElementById('photoUpload').click();
+}
+
+function handlePhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = document.getElementById('uploadedPhoto');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.getElementById('cameraVideo').style.display = 'none';
+    document.getElementById('cameraOverlay').style.display = 'none';
+    document.getElementById('cameraGuide').style.display = 'block';
+    stopCamera();
+    if (state.selectedTryOnItem) {
+      document.getElementById('clothingOverlay').textContent = state.selectedTryOnItem.emoji;
+      document.getElementById('clothingOverlay').style.display = 'block';
+      document.getElementById('tryOnBadge').style.display = 'block';
+    }
+    showToast('📸 Photo uploaded! Select an outfit to try on.');
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearTryOn() {
+  stopCamera();
+  document.getElementById('uploadedPhoto').style.display = 'none';
+  document.getElementById('clothingOverlay').style.display = 'none';
+  document.getElementById('cameraGuide').style.display = 'none';
+  document.getElementById('tryOnBadge').style.display = 'none';
+  document.getElementById('cameraOverlay').style.display = 'flex';
+  state.selectedTryOnItem = null;
+  renderTryOnStrip();
+  document.getElementById('photoUpload').value = '';
+}
+
+/* ============ AI CHAT ============ */
+function renderChat() {
+  const el = document.getElementById('chatMessages');
+  if (!el || state.chatHistory.length > 0) return;
+  const name = state.user?.name?.split(' ')[0] || 'there';
+  addChatMsg('ai', `Hey ${name}! I'm <b>LALA</b>, your personal AI stylist at Looks At Life ✨<br><br>I've analyzed your body profile — you're a <b>${state.bodyData?.size||'M'}</b>, and based on your style preferences (${(state.bodyData?.styles||['casual']).join(', ')}), I have some amazing recommendations for you!<br><br>What can I help you with today?`);
+}
+
+function addChatMsg(role, text) {
+  state.chatHistory.push({role, text});
+  const el = document.getElementById('chatMessages');
+  if (!el) return;
+  const div = document.createElement('div');
+  div.className = `chat-msg chat-msg-${role}`;
+  if (role==='ai') {
+    div.innerHTML = `<div class="chat-ai-name">🤖 LALA — AI Stylist</div><div class="chat-bubble chat-bubble-ai">${text}</div>`;
+  } else {
+    div.innerHTML = `<div class="chat-bubble chat-bubble-user">${text}</div>`;
+  }
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  addChatMsg('user', msg);
+  input.value = '';
+  input.style.height = 'auto';
+  // Typing indicator
+  const el = document.getElementById('chatMessages');
+  const typing = document.createElement('div');
+  typing.className = 'chat-msg chat-msg-ai';
+  typing.id = 'typingIndicator';
+  typing.innerHTML = `<div class="chat-ai-name">🤖 LALA</div><div class="chat-bubble chat-bubble-ai"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  el.appendChild(typing);
+  el.scrollTop = el.scrollHeight;
+  setTimeout(() => {
+    typing.remove();
+    const lower = msg.toLowerCase();
+    let response;
+    if (lower.includes('size')||lower.includes('fit')) response = CHAT_RESPONSES.size[0];
+    else if (lower.includes('color')||lower.includes('colour')) response = CHAT_RESPONSES.color[0];
+    else if (lower.includes('trend')) response = CHAT_RESPONSES.trend[0];
+    else if (lower.includes('outfit')||lower.includes('look')) response = CHAT_RESPONSES.outfit[0];
+    else if (lower.includes('hi')||lower.includes('hello')) response = CHAT_RESPONSES.greeting[0];
+    else response = CHAT_RESPONSES.default[Math.floor(Math.random()*CHAT_RESPONSES.default.length)];
+    addChatMsg('ai', response);
+  }, 1200 + Math.random()*800);
+}
+
+function handleChatKey(e) {
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+function autoResizeChat(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+/* ============ OUTFIT ============ */
+function showOutfitDetail() {
+  openModal(`<div>
+    <div style="font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:4px;">Today's Complete Look</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:20px;">AI-curated for your measurements & style</div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+      ${[['👔','Structured Linen Shirt','FORME','₹1,899'],['👖','Urban Cargo Joggers','STRIDE','₹2,199'],['👟','Clean White Sneakers','—','₹3,499'],['🧥','Chunky Knit Cardigan','WOVEN','₹2,799']]
+      .map(([e,n,b,p])=>`<div style="display:flex;align-items:center;gap:14px;padding:12px;background:var(--surface);border-radius:12px;border:1px solid var(--border);">
+        <span style="font-size:32px;">${e}</span>
+        <div><div style="font-weight:600;font-size:14px;">${n}</div><div style="font-size:12px;color:var(--text2);">${b} · ${p}</div></div>
+      </div>`).join('')}
+    </div>
+    <div style="padding:14px;background:rgba(200,169,110,0.08);border:1px solid rgba(200,169,110,0.2);border-radius:12px;margin-bottom:16px;font-size:13px;color:var(--text2);">
+      <b style="color:var(--accent2);">Total Look: ₹10,396</b> — All pieces match your body measurements and style profile.
+    </div>
+    <button class="btn btn-primary btn-full" onclick="closeModal();showToast('✓ Complete look added to cart!');">Add Complete Look to Cart</button>
+  </div>`);
+}
+
+/* ============ MODAL ============ */
+function openModal(html) {
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('modalBg').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+}
+
+/* ============ TOAST ============ */
+function showToast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  const container = document.getElementById('toastContainer');
+  container.appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity 0.3s'; setTimeout(()=>el.remove(),300); }, 2500);
+}
+</script>
+</body>
+</html>
